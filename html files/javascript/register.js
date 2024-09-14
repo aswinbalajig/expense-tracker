@@ -100,7 +100,7 @@ document.getElementById('ConfirmPassword').addEventListener('input', validateFor
                     localStorage.setItem('accessToken', data.access);
                     localStorage.setItem('refreshToken', data.refresh);
                     // Redirect to the homepage or another page
-                    window.location.href = 'homepage.html'; // Change to your homepage
+                    window.location.href = '../html/homepage.html'; // Change to your homepage
                 } else {
                     const errorData = await loginResponse.json();
                     console.error('Login failed:', errorData);

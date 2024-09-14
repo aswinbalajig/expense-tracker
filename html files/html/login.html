@@ -12,16 +12,6 @@
         <div class="container-fluid">
             <a class="navbar-brand ms-5" style="font-size: xx-large;" href="homepage.html">Expense Tracker</a>
                 <ul class="navbar-nav ms-auto d-inline-flex align-content-center justifiy-content-center">
-                    <li class="nav-item dropdown me-5">
-                        <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Category
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
-                            <li><button class="dropdown-item" onclick="buttonOne()">Groceries</button></li>
-                            <li><button class="dropdown-item" onclick="buttonTwo()">Bills</button></li>
-                            <li><button class="dropdown-item" onclick="buttonThree()">Entertainment</button></li>
-                        </ul>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Login</a>
                     </li>
@@ -79,8 +69,8 @@
               window.location.href = 'homepage.html'; // Change to your homepage
           } else {
               const errorData = await response.json();
-              console.error('Login failed:', errorData);
-              alert('Login failed: ' + errorData.non_field_errors[0]); // Display error message
+              console.error('Login failed:', errorData.detail);
+              alert('Login failed: ' + errorData.detail); // Display error message
           }
       } catch (error) {
           console.error('Error:', error);

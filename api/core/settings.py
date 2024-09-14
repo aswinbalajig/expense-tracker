@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'expensetracker',
         'HOST': 'localhost',
         'USER':'root',
-        'PASSWORD': 'lancer',
+        'PASSWORD': 'gabgab8009',
     }
 }
 
