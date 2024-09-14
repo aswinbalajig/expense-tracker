@@ -35,7 +35,7 @@ class CategoryRecordsViewSet(ModelViewSet):
 
 class RecordsViewSet(ModelViewSet):
     serializer_class=serializers.RecordsSerializer
-    #permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated]
     
     def get_queryset(self):
         user_id=self.request.user.id

@@ -1,3 +1,8 @@
+let currentEditExpenseId;
+
+
+
+
 async function isLoggedIn() {
     const token = localStorage.getItem('accessToken'); 
     if(token !== null)
@@ -108,8 +113,8 @@ async function displayTable(categoryId,categoryName) {
             <td>${expense.name}</td>
             <td>${expense.expense}</td>
             <td>${expense.date}</td>
-            <td><button class='editExpense' data-bs-toggle="modal" data-bs-target="#editExpenseModal"><i class="fas fa-edit"></i></button></td>
-            <td><button class='editExpense'  onclick=DeleteExpense(${expense.id},${expense.category_id})><i class="fas fa-trash"></i></button></td>
+            <td><button class='editExpenseButton' data-bs-toggle="modal" data-bs-target="#editExpenseModal" onclick='editExpense("${expense.name}",${expense.expense},${expense.id})'><i class="fas fa-edit"></i></button></td>
+            <td><button class='deleteExpenseButton'  onclick=DeleteExpense(${expense.id},${expense.category_id})><i class="fas fa-trash"></i></button></td>
 
         `;
 
@@ -138,10 +143,68 @@ async function DeleteExpense(expenseId,categoryId)
             alert('Unable to Delete Expense : ' + errorData.non_field_errors[0]); // Display error message
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error:', error.detail);
         alert('An error occurred. Please try again.');
     }
 
+}
+function editExpense(name,expense,id)
+{
+           
+            const formElement=document.getElementById("editExpenseForm");
+            const nameElement=formElement.querySelector("#Name");
+            const expenseElement=formElement.querySelector("#Expense");
+            nameElement.value=name;
+            expenseElement.value=expense;
+            currentEditExpenseId=id; 
+}
+
+function callSubmitEditExpenseEventListener()
+{
+    document.querySelector("#editExpenseForm").addEventListener('submit',
+
+        async function(event)
+        {   
+            event.preventDefault();
+            const formElement=document.getElementById("editExpenseForm");
+            if(formElement){
+            const name=formElement.querySelector("#Name").value;
+            const expense=formElement.querySelector("#Expense").value;
+
+            try{
+
+                const response=await fetch(`http://127.0.0.1:8000/records/${currentEditExpenseId}/`,
+                    {
+                        method:'PATCH',
+                        headers:{
+                            'Content-Type' : 'application/json' ,
+                            'Authorization' : `JWT ${localStorage.getItem('accessToken')}`
+                        },
+                        body : JSON.stringify({name,expense})
+                    }
+                );
+
+                if(response.ok)
+                {
+                    currentEditExpenseId=null;
+                    window.location.href="../html/homepage.html"
+                }
+                else{
+                    const errorData=await response.json();
+                    console.error("Unable to Edit: ",erroData);
+                    alert('Unable to edit Expense :'+ errorData.non_field_errors[0]);
+                }
+
+            }
+            catch(error){
+                console.error('Error : ',error);
+                alert('An error occured please try again..');
+            }
+        }
+        else{console.error("Form element not found");}
+        }
+
+    );
 }
 
 function callSubmitExpenseEventListener(){
@@ -154,6 +217,10 @@ function callSubmitExpenseEventListener(){
         const category=document.getElementById('expenseCategory').value;
 
         try {
+            if(expense<0)
+            {
+                throw new Error("price should be greater than zero");
+            }
             const response = await fetch(`http://127.0.0.1:8000/categories/${category}/records/`, {
                 method: 'POST',
                 headers: {
@@ -164,15 +231,14 @@ function callSubmitExpenseEventListener(){
             });
 
             if (response.ok) {
-                window.location.href = 'homepage.html'; // Change to your homepage
+                window.location.href = '../html/homepage.html'; // Change to your homepage
             } else {
                 const errorData = await response.json();
                 console.error('Unable to add Expense:', errorData);
                 alert('Unable to add Expense : ' + errorData.non_field_errors[0]); // Display error message
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
+            alert(` Please try again.  ${error}`);
         }
     } , 
     { signal: expenseFormController.signal }
@@ -246,8 +312,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     callSubmitExpenseEventListener();
     callSubmitCategoryEventListner();
-
-});
+    callSubmitEditExpenseEventListener();
+}
+);
 
 
 
