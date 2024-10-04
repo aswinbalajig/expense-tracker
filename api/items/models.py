@@ -42,9 +42,22 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+class group(models.Model):
+    name=models.CharField(max_length=255)
+    admin=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+class groupmembers(models.Model):
+    member=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    group=models.ForeignKey(group,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.member.username
+
 class Category(models.Model):
     name=models.CharField(max_length=255)
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    group=models.ForeignKey(group,null=True,on_delete=models.CASCADE)
      
     def __str__(self):
         return self.name
@@ -59,4 +72,3 @@ class Record(models.Model):
         return self.name
 
 
-    

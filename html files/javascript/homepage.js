@@ -1,7 +1,5 @@
 let currentEditExpenseId;
-
-
-
+let currentGroup;
 
 async function isLoggedIn() {
     const token = localStorage.getItem('accessToken'); 
@@ -30,9 +28,14 @@ async function redirectToLogin() {
         window.location.href = 'login.html'; 
     }
 }
-async function fetchCategories() {
+async function fetchCategories(group="personal") {
+    
     try {
-        const response = await fetch('http://127.0.0.1:8000/categories/', {
+        let url;
+        if(group==="personal"){ url= `http://127.0.0.1:8000/categories/`;  }
+        else{ url=`http://127.0.0.1:8000/groups/${group}/categories/`;}
+                  
+        const response = await fetch(url, {
             headers: {
                 'Authorization': `JWT ${localStorage.getItem('accessToken')}`
             }
@@ -46,13 +49,17 @@ async function fetchCategories() {
         console.error('Error fetching categories:', error);
     }
 }
-async function fetchExpenses(category) {
+
+
+
+
+async function fetchExpenses(categoryId,categoryName) {
     let url='';
-    if(category==='all')
-        url='http://127.0.0.1:8000/records/'
+    if(categoryId==='all')
+        url=`http://127.0.0.1:8000/records/?group_id=${currentGroup}`;
     else
     {
-        url=`http://127.0.0.1:8000/categories/${category}/records/`
+        url=`http://127.0.0.1:8000/categories/${categoryId}/records/`;
     }
     try {
         const response = await fetch(url, {
@@ -60,14 +67,108 @@ async function fetchExpenses(category) {
                 'Authorization': `JWT ${localStorage.getItem('accessToken')}`
             }
         });
-        return await response.json();
+        const expenses = await response.json();
+        displayTable(expenses,categoryName)
     } catch (error) {
         console.error('Error fetching expenses:', error);
     }
+    //note return name and expensejson to displaytable
 }
-async function displaycategory()
+
+async function fetchFilteredExpenses(categoryId,categoryName,fromDate,toDate)
+{   let url;
+    if (categoryName=="All")
+    {
+        url=`http://127.0.0.1:8000/records/?fromdate=${fromDate}&todate=${toDate}`;
+    }
+    else{
+        url=`http://127.0.0.1:8000/categories/${categoryId}/records/?fromdate=${fromDate}&todate=${toDate}`;
+    
+    const response= await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `JWT ${localStorage.getItem('accessToken')}`
+        },
+    });
+    if(response.ok)
+    {
+        const expenses=await response.json();
+        displayTable(expenses,categoryName);
+        pastMonth.onclick=getPastDate(categoryId,categoryName,"month");
+        pastWeek.onclick=getPastDate(categoryId,categoryName,"week");
+
+
+    }
+    else{
+        const errorData = await response.json();
+        console.error('Unable to filter Expense:', errorData);
+        alert('Unable to filter Expense : ' + errorData.non_field_errors[0]);
+    }
+}
+}
+
+async function fetchGroupNames()
 {
-    const categories = await fetchCategories();
+
+    try {
+        const url=`http://127.0.0.1:8000/groups/`;
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `JWT ${localStorage.getItem('accessToken')}`
+            }
+        });
+        const groups = await response.json();
+        return groups;
+    } catch (error) {
+        console.error('Error fetching expenses:', error);
+    }
+
+}
+
+async function displayGroupName()
+{
+
+          const groups = await fetchGroupNames();
+          const groupDropdown = document.getElementById('groupDropdown');
+          const dropdownMenu = groupDropdown.nextElementSibling;
+          dropdownMenu.innerHTML = ''; 
+                        const createGroup = document.createElement('li');
+                        const createGroupbutton=document.createElement('button');
+                        createGroupbutton.className = 'dropdown-item btn btn-dark text-white';
+                        createGroupbutton.textContent = "Create group";
+                        createGroupbutton.onclick = () => createGroup();
+                        createGroup.appendChild(createGroupbutton);
+                        dropdownMenu.appendChild(createGroup);
+                        dropdownMenu.innerHTML+='<div class="dropdown-divider"></div>';
+                        const personalListItem = document.createElement('li');
+                        const personalbutton=document.createElement('button');
+                        personalbutton.className = 'dropdown-item';
+                        personalbutton.textContent = "Personal Expenses";
+                        personalbutton.onclick = () => {displaycategory();};
+                        personalListItem.appendChild(personalbutton);
+          dropdownMenu.appendChild(personalListItem);              
+          groups.forEach(group => {
+              const listItem = document.createElement('li');
+              const button = document.createElement('button');
+              button.className = 'dropdown-item';
+              button.textContent = group.name;
+              button.onclick = () => displaycategory(group.id);
+              listItem.appendChild(button);
+              dropdownMenu.appendChild(listItem);
+          });
+                        
+
+}
+
+async function createGroup() {
+
+    
+}
+
+
+async function displaycategory(group="personal")
+{         currentGroup=group;
+          const categories = await fetchCategories(group);
           const categoryDropdown = document.getElementById('categoryDropdown');
           const dropdownMenu = categoryDropdown.nextElementSibling;
           dropdownMenu.innerHTML = ''; 
@@ -75,7 +176,7 @@ async function displaycategory()
           const allbutton=document.createElement('button');
           allbutton.className = 'dropdown-item';
         allbutton.textContent = "All";
-        allbutton.onclick = () => displayTable("all","All");
+        allbutton.onclick = () => fetchExpenses("all","All");
         allListItem.appendChild(allbutton);
           dropdownMenu.appendChild(allListItem);
           categories.forEach(category => {
@@ -83,21 +184,21 @@ async function displaycategory()
               const button = document.createElement('button');
               button.className = 'dropdown-item';
               button.textContent = category.name;
-              button.onclick = () => displayTable(category.id,category.name);
+              button.onclick = () => fetchExpenses(category.id,category.name);
               listItem.appendChild(button);
               dropdownMenu.appendChild(listItem);
           });
+          await fetchExpenses("all","All");
 }
 
-async function displayTable(categoryId,categoryName) {
-    const expenses = await fetchExpenses(categoryId);
+async function displayTable(expenses,categoryName) {
     const tbody = document.querySelector('.table tbody');
     const totalPriceElement=document.querySelector('#totalpricelabel')
     totalPriceElement.innerHTML='';
 
     const categoryNameDisplay = document.querySelector('.currentCategory');
     categoryNameDisplay.innerHTML="";
-    categoryNameDisplay.innerHTML=`<h2 class="fw-bold">${categoryName} Expenses</h2>`;
+    categoryNameDisplay.innerHTML=`<h1 class="fw-bold">${categoryName} Expenses</h1>`;
 
 
     let totalPrice = 0;
@@ -247,15 +348,32 @@ function callSubmitExpenseEventListener(){
 
 }
 
-function callSubmitCategoryEventListner(){
-
-    document.getElementById('categoryForm').addEventListener('submit', async function(event) {
+function callSubmitCategoryAndGroupEventListner(formId,pathName,nameElementId){
+    const context=pathName==='categories'?'category':'group';
+    document.getElementById(`${formId}`).addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent form submission
 
-        const name = document.getElementById('categoryName').value;
+        const name = document.getElementById(`${nameElementId}`).value;
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/categories/`, {
+            let url;
+            
+            if (pathName==='categories')
+            {
+                if(currentGroup=='personal')
+                {
+                    url=`http://127.0.0.1:8000/${pathName}/`;
+                }
+                else
+                {
+                    url=`http://127.0.0.1:8000/groups/${currentGroup}/${pathName}/`;
+                }
+            }
+            
+            
+
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -268,8 +386,8 @@ function callSubmitCategoryEventListner(){
                 window.location.href = 'homepage.html'; // Change to your homepage
             } else {
                 const errorData = await response.json();
-                console.error('Unable to add expense', errorData);
-                alert('Unable to add expense : ' + errorData.non_field_errors[0]); // Display error message
+                console.error(`Unable to add ${context} `, errorData);
+                alert(`Unable to add ${context} : ` + errorData.non_field_errors[0]); // Display error message
             }
         } catch (error) {
             console.error('Error:', error);
@@ -279,10 +397,17 @@ function callSubmitCategoryEventListner(){
 
 }
 
+function callCreateGroupEventListener()
+{
+    document.get
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
+
     await redirectToLogin();
     await displaycategory();
-    await displayTable("all","All");
+    await displayGroupName();
+    await fetchExpenses("all","All");
     const categoryNameDisplay = document.querySelector('.currentCategory');
     categoryNameDisplay.innerHTML="";
     categoryNameDisplay.innerHTML='<h1 class="fw-bold">All Expenses</h1>';
@@ -310,13 +435,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     else {
         console.error('Add More button not found.');
     }
+    callSubmitCategoryAndGroupEventListner('categoryForm','categories','categoryName');
+    callSubmitCategoryAndGroupEventListner('groupForm','groups','groupName');
     callSubmitExpenseEventListener();
-    callSubmitCategoryEventListner();
+    //callSubmitCategoryEventListner();
     callSubmitEditExpenseEventListener();
+    callCreateGroupEventListener();
+    const pastMonth=document.querySelector(".pastMonth");
+    const pastWeek=document.querySelector(".pastWeek")
+    pastMonth.onclick=getPastDate("all","All","month");
+    pastWeek.onclick=getPastDate("all","All","week");
 }
 );
 
+function getPastDate(categoryId,categoryName,datecase) {
+    const toDate = new Date(); // Current date
+    const fromDate = new Date(); // Create a new date object for fromDate
+    if(datecase==="week")
+        fromDate.setDate(toDate.getDate() - 7);
+    else if(datecase==="month")
+        fromDate.setMonth(toDate.getMonth() - 1);
 
+    // Optionally, format the dates as needed (e.g., yyyy-mm-dd)
+    const formattedFromDate = fromDate.toISOString().split('T')[0];
+    const formattedToDate = toDate.toISOString().split('T')[0];
+    fetchFilteredExpenses(categoryId,categoryName,formattedFromDate,formattedToDate);
+}
 
 function logout()
 {

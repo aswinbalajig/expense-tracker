@@ -33,7 +33,15 @@
         <div class="container-fluid">
             <a class="navbar-brand ms-5" style="font-size: xx-large;" href="#">Expense Tracker</a>
                 <ul class="navbar-nav ms-auto d-inline-flex align-content-center justifiy-content-center">
-                    <li class="nav-item dropdown me-5">
+                  <li class="nav-item dropdown me-5">
+                    <a class="nav-link dropdown-toggle" href="#" id="groupDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Groups
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="groupDropdown">
+                      
+                    </ul>
+                </li>  
+                  <li class="nav-item dropdown me-5">
                         <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Category
                         </a>
@@ -47,24 +55,39 @@
         </div>
     </nav>
 </header>
-<main>
+<main style="margin-top: 60px;">
 <div class="container" style="margin-top: 120px;">
-  <div class="mb-2 d-flex justifiy-content-center">
-    <div class="d-inline-flex flex-grow-1">
+  
+  <div class="mb-2 d-flex justify-content-between">
+    <div class="d-inline-flex">
       <button class="btn btn-secondary addMore" data-bs-toggle="modal" data-bs-target="#exampleModal">Add More</button>
       <button class="btn btn-secondary ms-3 addCategory" data-bs-toggle="modal" data-bs-target="#categoryModal" >Add a new Category</button>
     </div>
-    
-    <div class="currentCategory d-inline-flex flex-grow-1 justifiy-content-center align-items-center text-center ">
+    <div class="currentCategory d-inline-flex">
       <h2 class="fw-bold">All Expenses</h2>
     </div>
+    <div class="filterExpenseButtons d-inline-flex">
+      <button class="btn btn-secondary pastMonth">Past Month</button>
+      <button class="btn btn-secondary ms-3 pastWeek">Past Week</button>
   </div>
-  <div>
-    <div class="d-inline-flex justifiy-content-evenly align-items-center mt-5">
-        <h2 class="me-2 totalprice">Total Price:</h2>
-        <label id="totalpricelabel"><h2>0</h2></label>
-    </div>
   </div>
+  <div style="margin-top: 150px;">
+    <div class="d-flex justify-content-between align-items-center mt-5">
+      <div>
+          <div class="d-inline-flex ">
+            <h2 class="me-2 totalprice">Total Price:</h2>
+            <label id="totalpricelabel"><h2>0</h2></label>
+          </div>
+      </div>
+      <div>
+        <div class="d-inline-flex ">
+          <h2 class="me-2 totalprice">Total Price:</h2>
+          <label id="totalpricelabel"><h2>0</h2></label>
+        </div>
+      </div>
+      
+    </div>    
+  <div class="mt-5">
     <table class="table table-hover">
         <thead>
           <tr>
@@ -79,7 +102,9 @@
         <tbody>
           
         </tbody>
-      </table>
+    </table>
+  </div>
+  </div>
 <!--Add Expense Modal starts-->
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -206,6 +231,43 @@
 </div>
 
 <!--Edit Expense Modal End-->
+
+<!--Add Group Modal start-->
+<div class="modal fade" id="GroupModal" tabindex="-1" aria-labelledby="GroupModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Content for the modal -->
+          <form id="groupForm">
+              <div style="border-bottom: 2px solid black;" class="mb-4">
+                  <label>
+                    <h1>Add Category</h1>
+                  </label>
+              </div>
+              <div style="border: 2px solid rgb(83, 83, 83) ; border-radius:10px; padding:10px;">
+              <div class="form-group mb-4">
+                <label for="Name" class="mb-2">Name</label>
+                <input type="text" class="form-control" id="groupName" placeholder="name">
+              </div>      
+            <div id="errorMessages" class="error text-danger mb-3"></div>
+        
+        </div>      
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Add Group</button>
+      </div>
+      </form>
+    </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Add Group Modal ends-->
 
 </div>
 </main>
