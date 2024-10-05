@@ -82,11 +82,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'expensetracker',
+        'ENGINE': 'django.db.backends.yourdatabasetype',
+        'NAME': 'your db name',
         'HOST': 'localhost',
         'USER':'root',
-        'PASSWORD': 'gabgab8009',
+        'PASSWORD': 'your connection password',
     }
 }
 
