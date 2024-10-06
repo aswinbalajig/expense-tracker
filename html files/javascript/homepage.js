@@ -134,7 +134,7 @@ async function displayGroupName()
           dropdownMenu.innerHTML = ''; 
                         const createGroup = document.createElement('li');
                         const createGroupbutton=document.createElement('button');
-                        createGroupbutton.className = 'dropdown-item btn btn-dark text-white';
+                        createGroupbutton.className = 'dropdown-item';
                         createGroupbutton.textContent = "Create group";
                         createGroupbutton.onclick = () => createGroup();
                         createGroup.appendChild(createGroupbutton);
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const addMoreButton = document.querySelector('.addMore');
     if (addMoreButton) {
         addMoreButton.addEventListener('click', async function addoptions() {
-            const categories = await fetchCategories();
+            const categories = await fetchCategories(currentGroup);
             const dropdown = document.querySelector('#expenseCategory');
             if(dropdown)
             {

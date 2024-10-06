@@ -55,22 +55,28 @@ class createGroupMembersSerializer(serializers.ModelSerializer):
         fields=['member_name','member_id','group_id']
 
     member_name=serializers.SerializerMethodField()
+    def get_member_name(self,obj):
+        return obj.member.username
+    '''
+    
     member_id=serializers.SerializerMethodField()
     group_id=serializers.SerializerMethodField()
 
 
     def group_id(self,obj):
         return obj.group.id
-    def get_member_name(self,obj):
-        return obj.member.username
+    
     def get_member_id(self,obj):
         return obj.member.id
+    '''
+    
 
        
     def create(self,validated_data):
-        member=models.groupmembers(group=self.context['group'],member_id=self.context['user_id'])
+        member=models.groupmembers(group_id=self.context['group'],member_id=self.context['user_id'])
         member.save()
         return member
+    
 
 class ViewGroupMembersSerializer(serializers.ModelSerializer):
     class Meta:

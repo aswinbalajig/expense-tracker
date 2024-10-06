@@ -4,3 +4,5 @@ from . import models
 admin.site.register(models.CustomUser)
 admin.site.register(models.Category)
 admin.site.register(models.Record)
+admin.site.register(models.groupmembers)
+admin.site.register(models.group)

@@ -97,10 +97,10 @@ class CreateGroupMembersViewset(ModelViewSet):
 
     def get_serializer_context(self):
         user_id=self.request.user.id
-        group=self.kwargs['groups_pk']
+        group=self.kwargs['group_pk']
         return {'user_id' : user_id,'group' : group}
     def get_queryset(self):
-        group_id=self.kwargs['groups_pk']
+        group_id=self.kwargs['group_pk']
         return models.groupmembers.objects.filter(group_id=group_id)
 
                 

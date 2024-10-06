@@ -51,11 +51,10 @@ document.getElementById('ConfirmPassword').addEventListener('input', validateFor
             const password = document.getElementById('InputPassword').value;
             const errorMessages = document.getElementById('errorMessages');
 
-            // Clear previous error messages
+           
             errorMessages.innerHTML = '';
 
             try {
-                // Send registration data to the API
                 const response = await fetch('http://127.0.0.1:8000/auth/users/', {
                     method: 'POST',
                     headers: {
@@ -68,10 +67,9 @@ document.getElementById('ConfirmPassword').addEventListener('input', validateFor
                     }),
                 });
 
-                // Check if the response is successful
+                
                 if (!response.ok) {
                     const errorData = await response.json();
-                    // Check for specific error messages and display them
                     if (errorData.email) {
                         errorData.email.forEach(msg => {
                             errorMessages.innerHTML += `<p>${msg}</p>`;
@@ -85,30 +83,28 @@ document.getElementById('ConfirmPassword').addEventListener('input', validateFor
                     throw new Error('Registration failed');
                 }
 
-                // If registration is successful, redirect to login
+                
                 const loginResponse = await fetch('http://127.0.0.1:8000/auth/jwt/create/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, password }), // Send credentials
+                    body: JSON.stringify({ email, password }),
                 });
 
                 if (loginResponse.ok) {
                     const data = await loginResponse.json();
-                    // Store tokens in local storage
                     localStorage.setItem('accessToken', data.access);
                     localStorage.setItem('refreshToken', data.refresh);
-                    // Redirect to the homepage or another page
-                    window.location.href = '../html/homepage.html'; // Change to your homepage
+                    window.location.href = '../html/homepage.html'; 
                 } else {
                     const errorData = await loginResponse.json();
-                    console.error('Login failed:', errorData);
-                    alert('Login failed: ' + errorData.non_field_errors[0]); // Display error message
+                    //console.error('Login failed:', errorData);
+                    alert('Login failed: ' + errorData.non_field_errors[0]); 
                 }
 
             } catch (error) {
-                // Display a general error message if needed
-                errorMessages.innerHTML += `<p>${error.message}</p>`;
+                
+                errorMessages.innerHTML += `<p>${error.message}</p>`;//adding this to check if any other errors occured
             }
         });

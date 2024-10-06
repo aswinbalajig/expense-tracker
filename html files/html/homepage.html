@@ -60,7 +60,7 @@
   
   <div class="mb-2 d-flex justify-content-between">
     <div class="d-inline-flex">
-      <button class="btn btn-secondary addMore" data-bs-toggle="modal" data-bs-target="#exampleModal">Add More</button>
+      <button class="btn btn-secondary addMore" data-bs-toggle="modal" data-bs-target="#addexpense">Add More</button>
       <button class="btn btn-secondary ms-3 addCategory" data-bs-toggle="modal" data-bs-target="#categoryModal" >Add a new Category</button>
     </div>
     <div class="currentCategory d-inline-flex">
@@ -73,45 +73,45 @@
   </div>
   <div style="margin-top: 150px;">
     <div class="d-flex justify-content-between align-items-center mt-5">
-      <div>
+    </div>
+    <div class="mt-5">
+    <div class="card">
+      
+        <div class="card-header">
           <div class="d-inline-flex ">
             <h2 class="me-2 totalprice">Total Price:</h2>
             <label id="totalpricelabel"><h2>0</h2></label>
           </div>
-      </div>
-      <div>
-        <div class="d-inline-flex ">
-          <h2 class="me-2 totalprice">Total Price:</h2>
-          <label id="totalpricelabel"><h2>0</h2></label>
         </div>
-      </div>
-      
-    </div>    
-  <div class="mt-5">
-    <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Date</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
+        <table class="table table-hover">
           
-        </tbody>
-    </table>
-  </div>
-  </div>
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Date</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+          
+            
+            <tbody>
+              
+            </tbody>
+        </table>
+      </div>
+    </div>
+    </div>    
+    
 <!--Add Expense Modal starts-->
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addexpense" tabindex="-1" aria-labelledby="addexpenseLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Expense</h5>
+        <h5 class="modal-title" id="addexpenseLabel">Add Expense</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -244,7 +244,7 @@
           <form id="groupForm">
               <div style="border-bottom: 2px solid black;" class="mb-4">
                   <label>
-                    <h1>Add Category</h1>
+                    <h1>Add Group</h1>
                   </label>
               </div>
               <div style="border: 2px solid rgb(83, 83, 83) ; border-radius:10px; padding:10px;">
