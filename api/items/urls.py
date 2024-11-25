@@ -12,4 +12,5 @@ record_router.register('records',views.CategoryRecordsViewSet,basename="category
 group_router=routers.NestedDefaultRouter(router,'groups',lookup='group')
 group_router.register('members',views.CreateGroupMembersViewset,basename='group-members')
 group_router.register('categories',views.CategoryViewSet,basename='group-categories')
+group_router.register('adduser',views.SearchUserViewset,basename='group-adduser')
 urlpatterns=router.urls+record_router.urls+group_router.urls

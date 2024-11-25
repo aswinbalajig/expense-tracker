@@ -67,7 +67,7 @@ class RecordsViewSet(ModelViewSet):
         if group_id!='personal':
             categories=models.Category.objects.filter(group_id=group_id)
         else:
-            categories=models.Category.objects.filter(user_id=user_id)#here groupid would be null so we are comparing directly with model object because we cant compare null and number value(group_id model field)
+            categories=models.Category.objects.filter(user_id=user_id,group=None)#here groupid would be null so we are comparing directly with model object because we cant compare null and number value(group_id model field)
         print(fromDate)
         toDate=self.request.query_params.get('todate')
         if group_id==None:
@@ -88,7 +88,8 @@ class GroupViewSet(ModelViewSet):
         return {'user':user}
     def get_queryset(self):
         user=self.request.user
-        return models.group.objects.filter(admin=user)
+        group_id=models.groupmembers.objects.filter(member=user).values_list('group',flat=True)
+        return models.group.objects.filter(id__in=group_id)
 
 class CreateGroupMembersViewset(ModelViewSet):
     
@@ -104,5 +105,26 @@ class CreateGroupMembersViewset(ModelViewSet):
         return models.groupmembers.objects.filter(group_id=group_id)
 
                 
+class SearchUserViewset(ModelViewSet):
 
+    serializer_class=serializers.SearchUserSerializer
+    permission_classes=[IsAuthenticated]
+
+    def get_queryset(self):
+        keyword=str(self.request.query_params.get('search'))
+        print(f'search_keyword:{keyword}')
+        group_id=self.kwargs['group_pk']
+        print(f'group_id:{group_id}')
+        group_members_id=models.groupmembers.objects.filter(group_id=group_id).values_list('member',flat=True)
+        print(f'count={group_members_id.count()}')
+        for value in group_members_id:
+            print(f'group user id:{value}')
+        user=models.CustomUser.objects.exclude(id__in=group_members_id).filter(username__icontains=self.request.query_params.get('search'))
+        #user=models.CustomUser.objects.exclude(id__in=group_members_id)
+        #user=models.CustomUser.objects.all()
+        print(f'filtered users count : {user.count()}')
+        for value in user:
+            print(value)
+        print('---------------------') 
+        return user
 

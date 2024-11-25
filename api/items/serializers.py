@@ -84,5 +84,9 @@ class ViewGroupMembersSerializer(serializers.ModelSerializer):
         
 
    
-
+class SearchUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.CustomUser
+        fields=['username','id']
+    
     
